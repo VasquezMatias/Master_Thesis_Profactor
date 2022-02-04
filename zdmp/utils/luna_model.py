@@ -1,5 +1,6 @@
-import math
-import torch.nn.functional as F
+import os
+import torch
+import warnings
 from torch import nn as nn
 from prettytable import PrettyTable
 
@@ -12,6 +13,27 @@ def count_parameters(model):
         table.add_row([name, param])
         total_params+=param
     return table, total_params
+
+def Luna(pretrained=True):
+    model = LunaModel()
+    weights_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "..",
+                    r"pretrained_weights\Luna.pth.tar"
+                )
+    if pretrained:
+        if os.path.isdir(weights_path):
+            model.load_state_dict(torch.load(weights_path))
+        else:
+            warnings.warn(f"""\nCould not find pretrained weights in following directory: 
+
+{weights_path}
+
+The model was created without pretrained weights.
+
+""")
+    model.eval()
+    return model
 
 class LunaModel(nn.Module):
     def __init__(self, in_channels=3, conv_channels=8):
@@ -27,31 +49,11 @@ class LunaModel(nn.Module):
         self.head_linear = nn.Linear(20736, 2)
         self.head_softmax = nn.Softmax(dim=1)
 
-        #self._init_weights()
         self.linear_output = None
-
-    # see also https://github.com/pytorch/pytorch/issues/18182
-    def _init_weights(self):
-        for m in self.modules():
-            if type(m) in {
-                nn.Linear,
-                nn.Conv2d,
-                nn.ConvTranspose2d,
-            }:
-                nn.init.kaiming_normal_(
-                    m.weight.data, a=0, mode='fan_out', nonlinearity='relu',
-                )
-                if m.bias is not None:
-                    fan_in, fan_out = \
-                        nn.init._calculate_fan_in_and_fan_out(m.weight.data)
-                    bound = 1 / math.sqrt(fan_out)
-                    nn.init.normal_(m.bias, -bound, bound)
 
     def get_linear_output(self):
         assert self.linear_output != None, "Linear output not defined!"
         return self.linear_output
-
-
 
     def forward(self, input_batch):
         bn_output = self.tail_batchnorm(input_batch)
