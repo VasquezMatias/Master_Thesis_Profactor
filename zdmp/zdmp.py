@@ -5,6 +5,8 @@ import argparse
 import utils.casting_dataset as ds
 
 from utils.luna_model import Luna
+from utils.lightning_classifier import Classifier
+import utils.casting_dataset as cds
 
 
 def parse_arguments():
@@ -33,9 +35,22 @@ def is_ipynb():
     except NameError:
         return False      # Probably standard Python interpreter
 
+def get_luna(pretrained=True):
+    return Luna(pretrained=pretrained)
+
+def get_luna_trainer():
+    model = Luna(pretrained=False)
+    return Classifier(model)
+    
+def get_train_data():
+    return cds.get_train_data()
+
+def get_test_data():
+    return cds.get_test_data()
 
 def main():
-    args = parse_arguments().parse_args(sys.argv[1:])
+    parser = parse_arguments()
+    args, _ = parser.parse_known_args()
     data_path = ds.dataset_path(new_dir=args.ds_dir, is_notebook=is_ipynb())
     
     luna_model = Luna()

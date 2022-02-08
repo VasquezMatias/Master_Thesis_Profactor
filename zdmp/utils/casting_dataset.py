@@ -13,14 +13,13 @@ def path_dialog():
     return filedialog.askdirectory()
 
 def dataset_path(new_dir:bool=False, is_notebook:bool=False):
-    print(f"NOTEBOOK: {is_notebook}!")
     txt_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             r"casting_dataset_path.txt"
         )
     if os.path.isfile(txt_path) and not new_dir:
         with open(txt_path, "r") as text_file:
-            path = text_file.readlines()
+            path = text_file.readlines()[0]
     else:
         path = path_dialog()
         with open(txt_path, "w") as text_file:
@@ -32,7 +31,7 @@ def transform_train(vit=False, mean=torch.tensor([0.3460, 0.4832, 0.7033]), std=
         T.RandomHorizontalFlip(p=0.5),
         T.RandomVerticalFlip(p=0.3),
         T.RandomAffine(
-            degrees=45,
+            degrees=2.5,
             translate=(0.05, 0.05),
             scale=(0.95, 1.05)
         ),
@@ -42,7 +41,7 @@ def transform_train(vit=False, mean=torch.tensor([0.3460, 0.4832, 0.7033]), std=
             hue=0.2
         ),
         T.ToTensor(),
-        T.Resize(224) if vit else torch.nn.Identity,
+        T.Resize(224) if vit else T.Resize(300),
         T.Normalize(
             mean=mean,
             std=std
@@ -52,7 +51,7 @@ def transform_train(vit=False, mean=torch.tensor([0.3460, 0.4832, 0.7033]), std=
 def transform_test(vit=False, mean=torch.tensor([0.3460, 0.4832, 0.7033]), std=torch.tensor([1.0419, 1.0652, 1.0605])):
     return T.Compose([
         T.ToTensor(),
-        T.Resize(224) if vit else torch.nn.Identity,
+        T.Resize(224) if vit else T.Resize(300),
         T.Normalize(
             mean=mean,
             std=std
