@@ -49,6 +49,7 @@ def transform_train(vit=False, mean=torch.tensor([0.3460, 0.4832, 0.7033]), std=
     ])
 
 def transform_test(vit=False, mean=torch.tensor([0.3460, 0.4832, 0.7033]), std=torch.tensor([1.0419, 1.0652, 1.0605])):
+    print(f"transform - ViT size - {vit}")
     return T.Compose([
         T.ToTensor(),
         T.Resize(224) if vit else T.Resize(300),
@@ -69,6 +70,7 @@ def get_train_data(rand:bool=True, new_dir:bool=False, vit:bool=False):
 
 
 def get_test_data(rand:bool=True, new_dir:bool=False, vit:bool=False):
+    print(f"get_data - ViT size - {vit}")
     img_fldr = torchvision.datasets.ImageFolder(
         root=os.path.join(dataset_path(new_dir=new_dir), "test"),
         transform=transform_test(vit=vit)

@@ -2,12 +2,16 @@ import os
 import sys
 import torch
 import argparse
+import warnings
 import utils.casting_dataset as ds
 
 from utils.luna_model import Luna
+from utils.external_utils.vision_transformer import VitGenerator, VisionTransformer
+from utils.external_utils.preprocess import visualize_attention
 from utils.lightning_classifier import Classifier
 import utils.casting_dataset as cds
 
+from functools import partial
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -41,12 +45,40 @@ def get_luna(pretrained=True):
 def get_luna_trainer():
     model = Luna(pretrained=False)
     return Classifier(model)
-    
-def get_train_data():
-    return cds.get_train_data()
 
-def get_test_data():
-    return cds.get_test_data()
+def get_vit(path="/content/drive/MyDrive/Master_Thesis_Profactor/zdmp/pretrained_weights/vit.pth.tar", num_classes=2):
+    if os.path.isfile(path):
+        patch_size=8
+        model = VisionTransformer(patch_size=patch_size, num_classes=num_classes, embed_dim=384, depth=12, num_heads=6, mlp_ratio=4,
+                        qkv_bias=True, norm_layer=partial(torch.nn.LayerNorm, eps=1e-6))
+        model.load_state_dict(torch.load())
+        return model
+    else:
+        warnings.warn(f"Pretrained weights for ViT not found in following path:\n\n{path}\n\n")
+        return get_vit_finetune()
+
+def get_vit_finetune(
+        device=torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    ):
+    name = 'vit_small'
+    patch_size = 8
+    model = VitGenerator(
+      name, 
+      patch_size, 
+      device, 
+      evaluate=False, 
+      random=False,
+      verbose=True,
+      num_classes=2
+    )
+    return model
+    
+def get_train_data(vit=False):
+    return cds.get_train_data(vit=vit)
+
+def get_test_data(vit=False):
+    print(f"zdmp - ViT size - {vit}")
+    return cds.get_test_data(vit=vit)
 
 def main():
     parser = parse_arguments()
