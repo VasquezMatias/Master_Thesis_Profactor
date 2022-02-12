@@ -1,3 +1,4 @@
-dataset_path.txt
+zdmp/utils/casting_dataset_path.txt
+*.pth.tar
 __pycache__
 .ipynb_checkpoints
