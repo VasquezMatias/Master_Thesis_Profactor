@@ -16,7 +16,7 @@ Download this [dataset](https://www.kaggle.com/ravirajsinh45/real-life-industria
 
 Use one of the following codes to load the pretrained weights depending on the model to be used.
 
-### LUNA
+### [LUNA](zdmp/utils/luna_model.py)
 ```python
 model = Luna()
 state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=18dUsc1hP8ouSdc23BTu5BUiFgfrXr0-Z&confirm=t")
@@ -62,6 +62,13 @@ state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?exp
 model.load_state_dict(state_dict)
 ```
 
+### SWIN-T
+``` python
+model = timm.models.swin_tiny_patch4_window7_224()
+model.head = torch.nn.Linear(768, 2)
+state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1ttiqssbh-nyjCSFQxhsRvG0S66SkrBs6&confirm=t")
+model.load_state_dict(state_dict)
+```
 ## Examples
 
 The following notebooks show how the models where trained and how to use them with the casting dataset. 

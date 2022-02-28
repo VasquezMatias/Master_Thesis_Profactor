@@ -58,7 +58,8 @@ def plot_attention(img, attention):
 		# +THRESHOLD
 		plt.title(text[i])
 		if i == 1:
-			plt.colorbar()
+      #plt.colorbar()
+			plt.colorbar(fig,fraction=0.046, pad=0.04)
 	plt.show()
 	
 	plt.figure(figsize=(10,10))    
