@@ -39,13 +39,14 @@ class LunaModel(nn.Module):
     def __init__(self, in_channels=3, conv_channels=8):
         super(LunaModel, self).__init__()
 
-        self.tail_batchnorm = nn.BatchNorm2d(in_channels)
+        self.tail_batchnorm = nn.BatchNorm2d(in_channels)               # -> N x Cin x Hin x Win
 
-        self.block1 = LunaBlock(in_channels, conv_channels)
-        self.block2 = LunaBlock(conv_channels, conv_channels * 2)
-        self.block3 = LunaBlock(conv_channels * 2, conv_channels * 4)
-        self.block4 = LunaBlock(conv_channels * 4, conv_channels * 8)
+        self.block1 = LunaBlock(in_channels, conv_channels)             # -> ~ N x Co x Hin/2 x Win/2
+        self.block2 = LunaBlock(conv_channels, conv_channels * 2)       # -> ~ N x 2Co x Hin/4 x Win/4
+        self.block3 = LunaBlock(conv_channels * 2, conv_channels * 4)   # -> ~ N x 4Co x Hin/8 x Win/8
+        self.block4 = LunaBlock(conv_channels * 4, conv_channels * 8)   # -> ~ N x 8Co x Hin/16 x Win/16
 
+        # floor(Hin/16) x floor(Win/16) * 8 * conv_channels -> 18x18x8x8 = 20,736
         self.head_linear = nn.Linear(20736, 2)
         self.head_softmax = nn.Softmax(dim=1)
 

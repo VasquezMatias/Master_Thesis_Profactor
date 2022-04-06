@@ -7,10 +7,36 @@ Download this [dataset](https://www.kaggle.com/ravirajsinh45/real-life-industria
 
 ## More details
 
+The thesis is being written with LaTex, using overleaf. 
+* The latest version can be visited through this [link](https://www.overleaf.com/read/bdkddjsdwmwg).
+
+The topics that are done or almost done are:
+* Dataset
+* Luna Model
+* Transformer (NLP)
+* Vision transformer
+
+Some of the other topics have been started just to have a guide of what comes in that position.
+
+
+
+
 ## Requirements
 
-* torch
-* timm
+* torch 1.11.0+cu102
+* torchvision 0.12.0+cu102
+* timm 0.5.4
+* pytorch-lighning 1.6.0
+
+### Install requirements through pip
+
+```python
+pip install --upgrade torch
+pip install --upgrade torchtext     # This needs to be updated for pytorch-lightning to work properly
+pip install --upgrade torchvision
+pip install pytorch-lightning
+pip install timm
+```
 
 ## Usage
 
@@ -18,63 +44,44 @@ Use one of the following codes to load the pretrained weights depending on the m
 
 ### [LUNA](zdmp/utils/luna_model.py)
 ```python
-model = Luna()
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=18dUsc1hP8ouSdc23BTu5BUiFgfrXr0-Z&confirm=t")
-model.load_state_dict(state_dict)
+luna_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1-4k-6UBn4kH1ueanXB39Z375FaRmYCYS&confirm=t")
 ```
 
 ### ALEXNET
 ```python
-model = torch.hub.load('pytorch/vision:v0.10.0', 'alexnet')
-model.classifier[6] = torch.nn.Linear(4096, 2) 
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1WVbXJxI1so6TAh7sM4GXIzNQl-tWctwC&confirm=t")
-model.load_state_dict(state_dict)
+alexnet_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1TjgEAfjbQ9NTzF0Z0S4SiEF9uvmRYO_3&confirm=t")
 ```
 
 ### RESNET18
 ```python
-model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18')
-model.fc = torch.nn.Linear(512, 2)
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1nxGbmtyBDKlCOTOYLNz_8-GmFbJ9ML6V&confirm=t")
-model.load_state_dict(state_dict)
+resnet18_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1-Dh-hAa6OIQaU6PMlNXmy9NCAWLrgY7U&confirm=t")
 ```
 
 ### EFFICIENTNETV2
 ```python
-model = timm.models.efficientnetv2_rw_s()
-model.classifier = torch.nn.Linear(1792, 2)
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1--kslrtZ8ARe1o6EE7EOlcscPSgZTJ55&confirm=t")
-model.load_state_dict(state_dict)
+effnetv2_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1-EUXk4XO-4kqFlv_MXw0LMDHxTDwgSNg&confirm=t")
 ```
 
 ### CONVNEXT
 ```python
-model = timm.models.convnext.convnext_tiny()
-model.head.fc = torch.nn.Linear(768, 2)
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1eTbkcFYrxbSxJ4Jj0BpH1_mbLqJQ0LmP&confirm=t")
-model.load_state_dict(state_dict)
+convnext_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1-ExFlJq02ormAJrslXOR2cAuLth3Td2O&confirm=t")
 ```
 
 ### ViT
 ```python
-model = timm.create_model('vit_base_patch16_224', pretrained=False, num_classes=2)
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1-7kjESSsw5wKtHUnNx8C1q2lpPbL45jj&confirm=t")
-model.load_state_dict(state_dict)
+vit_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1CLAj3L9iz8y9saojWLzjPwmjW33MLuSY&confirm=t")
 ```
 
 ### SWIN-T
 ``` python
-model = timm.models.swin_tiny_patch4_window7_224()
-model.head = torch.nn.Linear(768, 2)
-state_dict = torch.hub.load_state_dict_from_url("https://drive.google.com/uc?export=download&id=1ttiqssbh-nyjCSFQxhsRvG0S66SkrBs6&confirm=t")
-model.load_state_dict(state_dict)
+swin_t_model = torch.utils.model_zoo.load_url("https://drive.google.com/uc?export=download&id=1-4MKJzlIWcWQeb5D8Ly7aJhfk29fz9-c&confirm=t")
 ```
 ## Examples
 
 The following notebooks show how the models where trained and how to use them with the casting dataset. 
 
-* [Models with CNN](notebooks/luna_example.ipynb)
-* [Transformer models](notebooks/vit_example.ipynb)
+* [Training the models](notebooks/train_models_example.ipynb)
+* [Loading the models](notebooks/load_models_example.ipynb)
 
 This notebook shows the comparisson between the models
 

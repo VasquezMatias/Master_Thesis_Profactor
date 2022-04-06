@@ -247,7 +247,7 @@ class VisionTransformer(nn.Module):
         cls_tokens = self.cls_token.expand(B, -1, -1)
         x = torch.cat((cls_tokens, x), dim=1)
 
-        # add positional encoding to each token
+        # add positional encoding to each token 
         x = x + self.interpolate_pos_encoding(x, w, h)
 
         return self.pos_drop(x)

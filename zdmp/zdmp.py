@@ -73,12 +73,12 @@ def get_vit_finetune(
     )
     return model
     
-def get_train_data(vit=False):
-    return cds.get_train_data(vit=vit)
+def get_train_data(vit=False, mean=0.5642, std=0.2386, calc_mean_std=False):
+    return cds.get_train_data(vit=vit, mean=mean, std=std, calc_mean_std=calc_mean_std)
 
-def get_test_data(vit=False):
+def get_test_data(vit=False, mean=0.5642, std=0.2386):
     print(f"zdmp - ViT size - {vit}")
-    return cds.get_test_data(vit=vit)
+    return cds.get_test_data(vit=vit, mean=mean, std=std)
 
 def main():
     parser = parse_arguments()
