@@ -24,9 +24,36 @@ def visualize_predict(model, img, img_size, patch_size, device):
 	attention = visualize_attention(model, img_pre, patch_size, device) 
 	plot_attention(img, attention)
 
+# LOOK HOW THE PLOT IS DONE FOR VIT
+# MAKE SURE IF IT CAN BE DONE PIXELWISE
+# BETTER RESOLUTION
+
+# MULTIPLICATION OF 
+# 	CLASS TOKEN
+# 	EACH OF THE BLOCKS
+
+#	SHOW WHAT HAPPENS HERE - PLOT AND COMPARE
+
+
+# shap
+# 	pretrained
+# 	finetuned
+
+# activation maps
+# 	pretrained
+# 	finetuned
 
 def visualize_attention(model, img, patch_size, device):
 	# make the image divisible by the patch size
+
+	# B x CLS ; Seq_Len x Hidd_dim
+	# B x 1 + 196 x 768
+	# B x 1 + 14*14 x 3*16*16
+
+	# B x 197 x 768 @ B x 768 x 197 = B x CLS+196 x CLS+196
+	# B x 197 x 768 @ B x 768 x 197 = B x CLS x 196
+	# attn [BxHEADx197x197]
+
 	w, h = img.shape[1] - img.shape[1] % patch_size, img.shape[2] - img.shape[2] % patch_size
 	img = img[:, :w, :h].unsqueeze(0)
 
@@ -39,6 +66,8 @@ def visualize_attention(model, img, patch_size, device):
 
 	# keep only the output patch attention
 	attentions = attentions[0, :, 0, 1:].reshape(nh, -1)
+
+	# 196 -> 14x14 -> 224x224
 	
 
 	attentions = attentions.reshape(nh, w_featmap, h_featmap)

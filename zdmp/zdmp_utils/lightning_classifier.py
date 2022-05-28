@@ -1,16 +1,17 @@
 import torch
 import pytorch_lightning as pl
 import torch.nn.functional as F
-from torchmetrics import Accuracy, MetricCollection, Precision, Recall
+from torchmetrics import Accuracy, MetricCollection, Precision, Recall, F1Score
 
 
 class Classifier(pl.LightningModule):
-    def __init__(self, model, lr: float = 2e-5, **kwargs): 
+    def __init__(self, model, fine_tuning:bool= True, lr: float = 2e-5, wd:float = 0.00025, **kwargs): 
         super().__init__()
-        self.save_hyperparameters('lr', *list(kwargs))
+        self.save_hyperparameters('lr', 'wd', *list(kwargs))
         self.model = model
+        self.fine_tuning = fine_tuning
         
-        metrics = MetricCollection([Accuracy(), Precision(), Recall()])
+        metrics = MetricCollection([Accuracy(), Precision(num_classes=2), Recall(num_classes=2), F1Score(num_classes=2)])
         self.train_metrics = metrics.clone(prefix='train_')
         self.valid_metrics = metrics.clone(prefix='val_')
         
@@ -40,5 +41,9 @@ class Classifier(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        #return torch.optim.Adam(self.parameters(), lr=self.lr)
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.lr, weight_decay = 0.00025)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.lr, weight_decay = self.hparams.wd)
+        if self.fine_tuning:
+            return optimizer
+        
+        lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
+        return [optimizer], [lr_scheduler]

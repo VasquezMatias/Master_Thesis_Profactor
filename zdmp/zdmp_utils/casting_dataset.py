@@ -21,10 +21,10 @@ def check_extension(path):
     else:
         return False
 
-def dataset_path(new_dir:bool=False, is_notebook:bool=False):
+def dataset_path(new_dir:str=None):
     txt_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            r"casting_dataset_path.txt"
+            r"casting_dataset_path.txt" if new_dir is None else new_dir
         )
     if os.path.isfile(txt_path) and not new_dir:
         with open(txt_path, "r") as text_file:
@@ -68,7 +68,7 @@ def transform_test(vit=False, mean=0.5643, std=0.2386):
         )
     ])
 
-def get_train_data(rand:bool=True, new_dir:bool=False, vit:bool=False, validate=True, mean=0.5643, std=0.2386, calc_mean_std=False):
+def get_train_data(rand:bool=True, new_dir:str=None, vit:bool=False, validate=True, mean=0.5643, std=0.2386, calc_mean_std=False):
     img_fldr = torchvision.datasets.ImageFolder(
         root=os.path.join(dataset_path(new_dir=new_dir), "train"),
         transform=transform_train(vit=vit, mean=mean, std=std) if not calc_mean_std else T.ToTensor(),
@@ -86,7 +86,7 @@ def get_train_data(rand:bool=True, new_dir:bool=False, vit:bool=False, validate=
         return img_fldr
 
 
-def get_test_data(rand:bool=True, new_dir:bool=False, vit:bool=False, mean=0.5643, std=0.2386):
+def get_test_data(rand:bool=True, new_dir:str=None, vit:bool=False, mean=0.5643, std=0.2386):
     print(f"get_data - ViT size - {vit}")
     img_fldr = torchvision.datasets.ImageFolder(
         root=os.path.join(dataset_path(new_dir=new_dir), "test"),

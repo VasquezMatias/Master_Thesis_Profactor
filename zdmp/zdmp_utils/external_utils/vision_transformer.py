@@ -121,9 +121,16 @@ class Attention(nn.Module):
         self.proj_drop = nn.Dropout(proj_drop)
 
     def forward(self, x):
+        # B x CLS ; Seq_Len x Hidd_dim
+        # B x 1 + 196 x 768
+        # B x 1 + 14*14 x 3*16*16
+
+        # 
         B, N, C = x.shape
         qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]
+
+        # B x 197 x 768 @ B x 768 x 197 = B x 197 x 197
 
         attn = (q @ k.transpose(-2, -1)) * self.scale
         attn = attn.softmax(dim=-1)
