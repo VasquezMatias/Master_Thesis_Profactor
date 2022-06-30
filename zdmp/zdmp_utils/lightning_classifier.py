@@ -11,9 +11,15 @@ class Classifier(pl.LightningModule):
         self.model = model
         self.fine_tuning = fine_tuning
         
-        metrics = MetricCollection([Accuracy(), Precision(num_classes=2), Recall(num_classes=2), F1Score(num_classes=2)])
+        metrics = MetricCollection([
+                Accuracy(num_classes=2, average='macro'), 
+                Precision(num_classes=2, average='macro'), 
+                Recall(num_classes=2, average='macro'), 
+                F1Score(num_classes=2, average='macro')
+            ])
         self.train_metrics = metrics.clone(prefix='train_')
         self.valid_metrics = metrics.clone(prefix='val_')
+        self.test_metrics = metrics.clone(prefix='test_')
         
     def forward(self, x):
         return self.model(x)
@@ -36,6 +42,17 @@ class Classifier(pl.LightningModule):
         
         self.log("val_loss", loss)
         output = self.valid_metrics(y_hat, y)
+        self.log_dict(output)
+
+        return loss
+
+    def test_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = F.cross_entropy(y_hat, y)
+
+        self.log("test_loss", loss)
+        output = self.test_metrics(y_hat, y)
         self.log_dict(output)
 
         return loss
