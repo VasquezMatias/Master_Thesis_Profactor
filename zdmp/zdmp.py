@@ -1,6 +1,7 @@
 import os
 import sys
 import torch
+import torchvision
 import argparse
 import warnings
 import zdmp_utils.casting_dataset as ds
@@ -79,6 +80,11 @@ def get_train_data(vit=False, mean=0.5642, std=0.2386, calc_mean_std=False):
 def get_test_data(vit=False, mean=0.5642, std=0.2386):
     print(f"zdmp - ViT size - {vit}")
     return cds.get_test_data(vit=vit, mean=mean, std=std)
+
+def to_PIL(img, mean=[0.5643], std=[0.2386]):
+    trans = torchvision.transforms.ToPILImage()
+    img =  img * torch.tensor([std])[:, None, None] + torch.tensor([mean])[:, None, None]
+    return trans(img.squeeze())
 
 def main():
     parser = parse_arguments()
