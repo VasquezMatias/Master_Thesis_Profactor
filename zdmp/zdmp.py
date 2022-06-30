@@ -11,6 +11,7 @@ from zdmp_utils.external_utils.vision_transformer import VitGenerator, VisionTra
 from zdmp_utils.external_utils.preprocess import visualize_attention
 from zdmp_utils.lightning_classifier import Classifier
 import zdmp_utils.casting_dataset as cds
+import zdmp_utils.gradcam as gc
 
 from functools import partial
 
@@ -85,6 +86,10 @@ def to_PIL(img, mean=[0.5643], std=[0.2386]):
     trans = torchvision.transforms.ToPILImage()
     img =  img * torch.tensor([std])[:, None, None] + torch.tensor([mean])[:, None, None]
     return trans(img.squeeze())
+
+
+def GradCAM(model, layer, use_cuda=False):
+    return gc.GradCAM(model, layer, use_cuda=use_cuda)
 
 def main():
     parser = parse_arguments()
